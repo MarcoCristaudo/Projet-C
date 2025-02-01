@@ -2,8 +2,10 @@
 #include <stdlib.h>
 #include "Caffichage.h"
 #include "struct_etud.h"
+#include "struct_jeu.h"
+#include "Tourelle.h"
 #include <unistd.h>
-
+#include <string.h>
 //fontion qui affiche un terrain neutre
 void afficheTerrainNeutre()
 {
@@ -57,39 +59,39 @@ void afficheVagues(FILE* fichierVague)
 }
 
 
-/* affichejeu(Liste *l) affiche les Etudiants avec leurs PV tour par tour tant qu'ils ne sont pas tous mort ou que le joueur n'a pas perdu*/
-void affichejeu(Liste *l){
+/* affichejeu(Jeu *jeu) affiche les Etudiants avec leurs PV tour par tour, tant qu'ils ne sont pas tous mort ou que le joueur n'a pas perdu*/
+void affichejeu(Jeu *jeu){
+    //Etudiant* tab[NOMBRE_LIGNES][15];
     
-    int tour_courant=0;
-    while(l[0].tete!=NULL || l[1].tete!=NULL || l[2].tete!=NULL || l[3].tete!=NULL || l[4].tete!=NULL || l[5].tete!=NULL || l[6].tete!=NULL){
-
-        for (int i = 0; i < NOMBRE_LIGNES; i++){
-            Etudiant *courant=l[i].tete;
-            if(courant!=NULL){// on vérifie si la ligne a des Etudiants ou pas
-                if (l[i].prochain!=NULL){
-                    if (l[i].prochain->tour<=tour_courant){ 
-                            l[i].prochain=l[i].prochain->next;
-                        }
-                }
-                while(courant!=l[i].prochain){
-                    avancer(courant,l);
-                    if(courant->position<=0){
-                        perdu(l);
-                        return;
-                    }
-                    courant=courant->next_line;
-                }
-                courant =l[i].tete;
+    while(jeu->nombre_etudiant!=0){//tant qu'il y a des étudiants vivants
+        /*
+        memset(tab,0,sizeof(tab));//intitialise tout les éléments de tab à NULL
+        Etudiant *courant=jeu->etudiants;
+        while(courant!=jeu->dernier){
+            if(courant->position<15 && courant->tour<=jeu->tour){
+                tab[(courant->ligne)-1][courant->position]=courant;
+                courant=courant->next;
+            }else{
+                courant=courant->next;
             }
-            printf("%d|", i + 1);
+            if(jeu->dernier->position<15 && jeu->dernier->tour<=jeu->tour){
+                tab[(jeu->dernier->ligne)-1][jeu->dernier->position]=jeu->dernier;
+            }
+        }
+        */
+        /* pour toute les positions sur le terrain de jeu, on regarde si on a une tourelle ou un étudiant et
+        à l'aide de trouver_pos_exacte_tour et trouver_pos_exacte_etu on l'affiche. Sinon on affiche un point*/
+        for (int i = 0; i < NOMBRE_LIGNES; i++){
+            printf("%d|",i+1);
             for (int j = 0; j < 15; j++){
-
-                if(courant!=NULL){
-                    if (courant->position==j){
-                        printf("%3d%c ",courant->pointsDeVie,courant->type);
-                        courant=courant->next_line;
-                    }else{
-                        printf("%4c ", '.');
+                Tourelle *t=trouver_pos_exacte_tour(jeu,i+1,j);
+                Etudiant *e=trouver_pos_exacte_etu(jeu,i+1,j);
+                if(t!=NULL || e!=NULL){
+                    if(t!=NULL){
+                        printf("%3d%c ",t->pointsDeVie,t->type);
+                    }
+                    if(e!=NULL){
+                        printf("%3d%c ",e->pointsDeVie,e->type);
                     }
                 }else{
                     printf("%4c ", '.');
@@ -97,26 +99,55 @@ void affichejeu(Liste *l){
             }
             printf("\n");
         }
+        jeu->tour+=1;
+        actionsTourelles(jeu);//on actionne les tourelles
+        Etudiant *courant1=jeu->etudiants;
+        //on boucle sur tout les étudiants en les faisants avancer
+        while(courant1!=jeu->dernier){
+            if( courant1->tour<=jeu->tour){//si l'étudiant courant est sur le terrain de jeu ou peut y rentrer
+                Etudiant * tmp=courant1;
+                /*on utilise une variable temporaire pour pouvoir passer au prochain étudiant
+                        sur la ligne avant d'appeler avancer qui risque d'appeler à son tour
+                        touche_Etudiant qui va libérer la mémoire allouée par l'étudiant si il meurt
+                */
+                courant1=courant1->next;
+                avancer(tmp,jeu);
+
+            }else{
+                courant1=courant1->next;
+            }
+            if( jeu->dernier->tour<=jeu->tour){//on fait le cas du dernier étudiant
+                avancer(jeu->dernier,jeu);
+            }
+        }
+        usleep(1000000);
+        //system("clear");
         printf("\n");
         printf("\n");
-        usleep(500000);
-        tour_courant+=1;
+        
     }
-    gagner();
+    //si il n'y a plus d'étudiant, le jeu est gagné
+    gagner(jeu);
 
 }
 
-//perdu et  gagner a faire mieux apres
+//a faire mieux apres perdu et gagner avec un joli affichage
 
 /* perdu() s'occupe de l'affichage en cas de victoire*/
-void perdu(){
-    system("clear");
-    printf("vous avez perdu \n");
+void perdu(Jeu* jeu){
+    system("clear");//si vous souhaiter voir toute les étapes mettez cette ligne en commentaire
+    printf("vous avez perdu gros Neuille\n");
+    liberer_tourelle(jeu);
+    liberer_etudiant(jeu);
+    free(jeu);
 }
 /* perdu() s'occupe de l'affichage en cas de victoire*/
-void gagner(){
+void gagner(Jeu* jeu){
     system("clear");
-    printf("vous avez gagner");
+    liberer_etudiant(jeu);
+    liberer_tourelle(jeu);
+    free(jeu);
+    printf("vous avez gagné\n");
 }
 
 //fonction qui verifie si le fichier est conforme
@@ -157,7 +188,7 @@ int fichierConforme(FILE* fichierVague)
             printf("Espaces entre les positions non conformes.\n");
             return 0;
         }
-        else if ((chainePositions[4] != 'Z') && (chainePositions[4] != 'M') && (chainePositions[4] != 'L') && (chainePositions[4] != 'S') && (chainePositions[4] != 'X'))
+        else if ((chainePositions[4] != 'Z') && (chainePositions[4] != 'M') && (chainePositions[4] != 'D') && (chainePositions[4] != 'S') && (chainePositions[4] != 'X'))
         {
             printf("Type non conforme.\n");
             return 0;
@@ -167,5 +198,3 @@ int fichierConforme(FILE* fichierVague)
     rewind(fichierVague); //si tout va bien, remettre le curseur au debut du fichier
     return 1;
 }
-
-
