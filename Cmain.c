@@ -13,9 +13,17 @@ int main(int argc, char* argv[])
     afficher_meilleurs_scores();
     FILE* fichierVague = NULL;
     //choix du niveau et ouverture fichier correspondant
-    int choixNiveau = 0;
+    int choixNiveau = 0, choix=0;
+
     printf("Choisissez le niveau entre 1 et 5 (1 étant facile et 5 difficile) : \n");
-    scanf("%d", &choixNiveau);
+    choix=scanf("%d", &choixNiveau); // On stock la valeur de retour du scanf pour la teste, car nous avons vu qu'on pouvait avoir une boucle infinie si la valeur saisie n'était pas un int
+
+    while (choix==EOF || choix!=1 || choixNiveau <1 || choixNiveau >5){
+        printf("Vous avez saisi une valeur invalide. Veuillez saisir une valeur entre 1 et 5. \n");
+        while (getchar() != '\n');  // pour vider le \n dans le buffer sinon on a une boucle infinie
+        choix=scanf("%d", &choixNiveau); 
+
+    }
     switch(choixNiveau)
     {
         case 1 :
