@@ -53,8 +53,8 @@ void type_Etudiant(int type,Etudiant* e,Jeu* j){
             
         case 'D':
             e->degats=1;
-            e->pointsDeVie=3;
-            e->PV_max=3;
+            e->pointsDeVie=4;
+            e->PV_max=4;
             e->un_sur_2=1;
             e->vitesse=1;
             e->affichage="<+>\n _0\n /|";
@@ -68,8 +68,8 @@ void type_Etudiant(int type,Etudiant* e,Jeu* j){
             break;
         
         case 'X':
-            e->degats=rand()%4+1;
-            e->pointsDeVie=rand()%7+1;
+            e->degats=rand()%6+1;
+            e->pointsDeVie=rand()%8+1;
             e->PV_max=e->pointsDeVie;
             e->vitesse=rand()%3+1;
             e->affichage="_<?>\n    #>\n    /|";
