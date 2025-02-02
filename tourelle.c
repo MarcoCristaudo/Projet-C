@@ -62,6 +62,7 @@ void chainage_tourelle(Jeu * jeu){
         int i;//dans i va etre stocker le type de tourelle
         int ligne;
         int position;
+        int temp;
         printf("il vous reste %d crédits\n\n",jeu->cagnotte);
         printf("Quelle type de tourelle voulez vous?\n\n");
         printf("tapez 1 pour placer une tourelle de base. PRIX 100\n\n");
@@ -69,7 +70,14 @@ void chainage_tourelle(Jeu * jeu){
         printf("tapez 3 pour placer une mine. PRIX 100\n\n");
         printf("tapez 4 pour placer une tourelle avec degat de zone. PRIX 200\n\n");
         printf("tapez 5 pour placer un mur. PRIX 50\n\n");
-        scanf("%d" ,&i);
+
+        temp=scanf("%d" ,&i);//vérification d'une saisie valide 
+        
+        while (temp==EOF || temp!=1 || i <1 || i >5){
+        printf("Vous avez saisi une valeur invalide. Veuillez saisir une valeur entre 1 et 5. \n");
+        while (getchar() != '\n');  // pour vider le \n dans le buffer sinon on a une boucle infinie
+        temp=scanf("%d", &i); 
+        }
 
         while(i!=1 && i!=2 && i!=3 && i!=4 && i!=5 ){//tant que i n'est pas un type qui existe, on redemande à l'utilisateur d'écrire le type qu'il veut
             printf("Ce type de tourelle n'existe pas veuillez chosir correctement\n\n");
@@ -125,11 +133,33 @@ void chainage_tourelle(Jeu * jeu){
                 scanf("%d" ,&i);
             }
         }
-            
+        
+        int temp_ligne,temp_position;
+
         printf("choisissez une ligne entre 1 et 7\n");
-        scanf("%d" ,&ligne);
+        temp_ligne=scanf("%d" ,&ligne);
+
+        while (temp_ligne==EOF || temp_ligne!=1 || ligne <1 || ligne >7){
+
+        printf("Vous avez saisi une valeur invalide. Veuillez saisir une valeur entre 1 et 7. \n");
+        while (getchar() != '\n');  // pour vider le \n dans le buffer sinon on a une boucle infinie
+        temp_ligne=scanf("%d", &ligne); 
+
+        }
+
         printf("choisissez une position entre 0 et 13\n");
-        scanf("%d" ,&position);
+        temp_position=scanf("%d" ,&position);
+
+        while (temp_position==EOF || temp_position!=1 || position<1 || position >7){
+
+        printf("Vous avez saisi une valeur invalide. Veuillez saisir une valeur entre 1 et 7. \n");
+        while (getchar() != '\n');  // pour vider le \n dans le buffer sinon on a une boucle infinie
+        temp_position=scanf("%d", &position); 
+
+        }
+
+
+
         int position_occupe=0;
         if (jeu->tourelles!=NULL){
             if(jeu->tourelles==jeu->derniere){
