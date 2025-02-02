@@ -81,11 +81,11 @@ void chainage_tourelle(Jeu *jeu) {
         DrawText("Utilisez les flèches pour vous déplacer, ESPACE pour placer une tourelle, 1-5 pour type, ENTER pour finir", 10, 10, 20, WHITE);
         DrawText(TextFormat("Cagnotte: %d", jeu->cagnotte), 10, 40, 20, WHITE);
         DrawText(TextFormat("Type sélectionné: %d", type), 10, 60, 20, WHITE);
-        DrawText("Tapez 1 pour sélectionner une tourelle de base. PRIX 100", 10, 800, 20, WHITE);
-        DrawText("Tapez 2 pour sélectionner une tourelle ralentisseuse. PRIX 150", 10, 830, 20, WHITE);
-        DrawText("Tapez 3 pour sélectionner une mine. PRIX 100", 10, 860, 20, WHITE);
-        DrawText("Tapez 4 pour sélectionner une tourelle avec degat de zone. PRIX 200", 10, 890, 20, WHITE);
-        DrawText("Tapez 5 pour sélectionner un mur. PRIX 50", 10, 920, 20, WHITE);
+        DrawText("Tapez 1 pour sélectionner une tourelle de base. PRIX 100", 10, 850, 15, WHITE);
+        DrawText("Tapez 2 pour sélectionner une tourelle ralentisseuse. PRIX 150", 10, 870, 15 ,WHITE);
+        DrawText("Tapez 3 pour sélectionner une mine. PRIX 100", 10, 890, 15, WHITE);
+        DrawText("Tapez 4 pour sélectionner une tourelle avec degat de zone. PRIX 200", 10, 910, 15, WHITE);
+        DrawText("Tapez 5 pour sélectionner un mur. PRIX 50", 10, 930, 15, WHITE);
         
         // permet de se déplacer sur la grille
         if (IsKeyPressed(KEY_UP) && ligne > 1) ligne--;
@@ -147,6 +147,8 @@ void chainage_tourelle(Jeu *jeu) {
         }
     }
     //on ferme la fenètre lorsque l'on a fini
+    UnloadFont(GetFontDefault());
+    
     CloseWindow();
 }
         
