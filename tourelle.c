@@ -19,9 +19,9 @@ Tourelle *creerTourelle(int ligne, int position, int choix_joueur,Jeu *jeu){
     {
     case 1: //tourelle_de_base:
         nouvelleTourelle->prix = 100;
-        nouvelleTourelle->pointsDeVie = 5;
+        nouvelleTourelle->pointsDeVie = 3;
         nouvelleTourelle->type='T';
-        nouvelleTourelle->degats=2;
+        nouvelleTourelle->degats=1;
         break;
     case 2: //tourelle_ralentisseuse:
         nouvelleTourelle->prix = 150;
@@ -150,9 +150,9 @@ void chainage_tourelle(Jeu * jeu){
         printf("choisissez une position entre 0 et 13\n");
         temp_position=scanf("%d" ,&position);
 
-        while (temp_position==EOF || temp_position!=1 || position<1 || position >7){
+        while (temp_position==EOF || temp_position!=1 || position<0 || position >13){
 
-        printf("Vous avez saisi une valeur invalide. Veuillez saisir une valeur entre 1 et 7. \n");
+        printf("Vous avez saisi une valeur invalide. Veuillez saisir une valeur entre 0 et 13. \n");
         while (getchar() != '\n');  // pour vider le \n dans le buffer sinon on a une boucle infinie
         temp_position=scanf("%d", &position); 
 
